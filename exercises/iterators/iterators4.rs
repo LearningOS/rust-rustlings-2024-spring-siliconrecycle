@@ -3,8 +3,6 @@
 // Execute `rustlings hint iterators4` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 pub fn factorial(num: u64) -> u64 {
     // Complete this function to return the factorial of num
     // Do not use:
@@ -15,6 +13,20 @@ pub fn factorial(num: u64) -> u64 {
     // For an extra challenge, don't use:
     // - recursion
     // Execute `rustlings hint iterators4` for hints.
+    // 1 = 0
+    // 1 = 1 x 1
+    // 2 = 2 x 1
+    // 6 = 3 x 2 x 1
+    // 24 = 4 x 3 x 2 x 1
+
+    // if num == 0 { return 1 };
+    // element acc x r
+    // 1       1   1 1
+    // 2       1   2 2
+    // 3       2   3 6
+    // 4       6   4 24
+    // (1..=num).fold(1, |acc, x| acc * x)
+    (1..=num).product()
 }
 
 #[cfg(test)]
