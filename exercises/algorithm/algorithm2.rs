@@ -1,8 +1,7 @@
 /*
-	double linked list reverse
-	This problem requires you to reverse a doubly linked list
+double linked list reverse
+This problem requires you to reverse a doubly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -15,7 +14,7 @@ struct Node<T> {
     prev: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Node<T> {
+impl<T: std::fmt::Debug> Node<T> {
     fn new(t: T) -> Node<T> {
         Node {
             val: t,
@@ -31,13 +30,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::fmt::Debug> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: std::fmt::Debug> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -72,9 +71,46 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn reverse(&mut self){
-		// TODO
-	}
+    pub fn reverse(&mut self){
+        // TODO
+        // struct Node<T> {
+        //     val: T,
+        //     next: Option<NonNull<Node<T>>>,
+        //     prev: Option<NonNull<Node<T>>>,
+        // }
+        // struct LinkedList<T> {
+        //     length: u32,
+        //     start: Option<NonNull<Node<T>>>,
+        //     end: Option<NonNull<Node<T>>>,
+        // }
+
+        // node 1
+        //  1* 2 3 4 5 6 7
+        //2 1* 2
+        //2 1*
+        //2* 1
+        // node 2
+        //  1 2* 3 4 5 6 7
+        //  3 2* 3
+        //  3 2* 1
+        //  3* 2 1
+
+        let mut current = self.start;
+        let mut tmp = None;
+        while current.is_some() {
+            let mut current_node = unsafe {current.unwrap().as_mut()};
+
+            tmp = current_node.prev;
+            current_node.prev = current_node.next;
+            current_node.next = tmp;
+
+            current = current_node.prev;
+        }
+
+        tmp = self.start;
+        self.start = self.end;
+        self.end = tmp;
+    }
 }
 
 impl<T> Display for LinkedList<T>
@@ -127,33 +163,33 @@ mod tests {
 
     #[test]
     fn test_reverse_linked_list_1() {
-		let mut list = LinkedList::<i32>::new();
-		let original_vec = vec![2,3,5,11,9,7];
-		let reverse_vec = vec![7,9,11,5,3,2];
-		for i in 0..original_vec.len(){
-			list.add(original_vec[i]);
-		}
-		println!("Linked List is {}", list);
-		list.reverse();
-		println!("Reversed Linked List is {}", list);
-		for i in 0..original_vec.len(){
-			assert_eq!(reverse_vec[i],*list.get(i as i32).unwrap());
-		}
-	}
+        let mut list = LinkedList::<i32>::new();
+        let original_vec = vec![2,3,5,11,9,7];
+        let reverse_vec = vec![7,9,11,5,3,2];
+        for i in 0..original_vec.len(){
+            list.add(original_vec[i]);
+        }
+        println!("Linked List is {}", list);
+        list.reverse();
+        println!("Reversed Linked List is {}", list);
+        for i in 0..original_vec.len(){
+            assert_eq!(reverse_vec[i],*list.get(i as i32).unwrap());
+        }
+    }
 
-	#[test]
-	fn test_reverse_linked_list_2() {
-		let mut list = LinkedList::<i32>::new();
-		let original_vec = vec![34,56,78,25,90,10,19,34,21,45];
-		let reverse_vec = vec![45,21,34,19,10,90,25,78,56,34];
-		for i in 0..original_vec.len(){
-			list.add(original_vec[i]);
-		}
-		println!("Linked List is {}", list);
-		list.reverse();
-		println!("Reversed Linked List is {}", list);
-		for i in 0..original_vec.len(){
-			assert_eq!(reverse_vec[i],*list.get(i as i32).unwrap());
-		}
-	}
+    #[test]
+    fn test_reverse_linked_list_2() {
+        let mut list = LinkedList::<i32>::new();
+        let original_vec = vec![34,56,78,25,90,10,19,34,21,45];
+        let reverse_vec = vec![45,21,34,19,10,90,25,78,56,34];
+        for i in 0..original_vec.len(){
+            list.add(original_vec[i]);
+        }
+        println!("Linked List is {}", list);
+        list.reverse();
+        println!("Reversed Linked List is {}", list);
+        for i in 0..original_vec.len(){
+            assert_eq!(reverse_vec[i],*list.get(i as i32).unwrap());
+        }
+    }
 }

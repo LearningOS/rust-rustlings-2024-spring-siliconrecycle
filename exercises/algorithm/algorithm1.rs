@@ -2,8 +2,6 @@
 single linked list merge
 This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
-
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
@@ -30,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::cmp::PartialOrd> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: std::cmp::PartialOrd> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -71,10 +69,6 @@ impl<T> LinkedList<T> {
         }
     }
 
-    fn print_type_of<T>(_: &Option<&T>) {
-        println!("type: {}", std::any::type_name::<T>());
-    }
-
     pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self {
         //TODO
         // struct Node<T> {
@@ -88,15 +82,62 @@ impl<T> LinkedList<T> {
         // }
 
         let mut list_a_b = LinkedList::default();
-        let mut current_a = list_a.start;
-        let mut current_b = list_b.start;
 
-        // while current_a.is_some() || current_b.is_some() {
-            let val_a = current_a.map(|ptr| unsafe { &(*ptr.as_ptr()).val});
-        Self::print_type_of(&val_a);
+        let mut a_current = list_a.start;
+        let mut b_current = list_b.start;
 
-            // let val_b = current_b.map(|ptr| unsafe { &(*ptr.as_ptr()).val});
-            // println!("val_a: {}, val_b: {}", val_a, val_b);
+        while let (Some(a_ptr), Some(b_ptr)) = (a_current, b_current) {
+            let a_val: &T = &unsafe { a_ptr.as_ref() }.val;
+            let b_val: &T = &unsafe { b_ptr.as_ref() }.val;
+
+            if a_val < b_val {
+                let next = unsafe { a_ptr.as_ref() }.next;
+                list_a_b.add(unsafe { a_ptr.as_ptr().read() }.val);
+                a_current = next;
+            } else {
+                let next = unsafe { b_ptr.as_ref() }.next;
+                list_a_b.add(unsafe { b_ptr.as_ptr().read() }.val);
+                b_current = next;
+            }
+        };
+
+        while let Some(a_ptr) = a_current {
+            let next = unsafe { a_ptr.as_ref() }.next;
+            list_a_b.add(unsafe { a_ptr.as_ptr().read() }.val);
+            a_current = next;
+        };
+
+        while let Some(b_ptr) = b_current {
+            let next = unsafe { b_ptr.as_ref() }.next;
+            list_a_b.add(unsafe { b_ptr.as_ptr().read() }.val);
+            b_current = next;
+        };
+
+
+        // while a_current.is_some() || b_current.is_some() {
+        //     let val_a_next = a_current.map(|ptr| unsafe { &(*ptr.as_ptr()).val });
+        //     let val_b_next = b_current.map(|ptr| unsafe { &(*ptr.as_ptr()).val });
+
+        //     match (val_a_next, val_b_next) {
+        //         (Some(val_a), Some(val_b)) => {
+        //             if val_a < val_b {
+        //                 list_a_b.add(val_a.read());
+        //                 a_current = unsafe { (*a_current.unwrap().as_ptr()).next };
+        //             } else {
+        //                 list_a_b.add(val_b.clone());
+        //                 b_current = unsafe { (*b_current.unwrap().as_ptr()).next };
+        //             }
+        //         },
+        //         (Some(val_a), None) => {
+        //             list_a_b.add(val_a.clone());
+        //             a_current = unsafe { (*a_current.unwrap().as_ptr()).next };
+        //         },
+        //         (None, Some(val_b)) => {
+        //             list_a_b.add(val_b.clone());
+        //             b_current = unsafe { (*b_current.unwrap().as_ptr()).next };
+        //         },
+        //         (None, None) => break,
+        //     }
         // }
 
         list_a_b
